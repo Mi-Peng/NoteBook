@@ -3,7 +3,7 @@
 ---
 #### 1. What is Batch Normalization
 
-\ \ 传统机器学习/统计分析中，一般要对输入的feature/data做scale，常见的方法有：
+  传统机器学习/统计分析中，一般要对输入的feature/data做scale，常见的方法有：
 
 * 线性归一化(Min-Max Scaling)      
 	$$
