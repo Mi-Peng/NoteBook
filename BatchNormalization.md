@@ -80,12 +80,15 @@ $$
 &emsp;&emsp;实验目的：控制输入数据的均值与方差是否直接关系到训练效果？
 
 &emsp;&emsp;文章设计实验一：在BN层之后，在激活函数之前，在每一个时间步给数据增加一个噪音。此举会严重抖动数据，数据分布变得更加杂乱无章，十分不稳定。在每一个时间步，每一个中间层都接受一个**不同**的数据分布。实验结果表明，BN with Noise 与BN表现相差无几。
+
 <div align=center><img src="./figs/BN5.png"></div>
+
 &emsp;&emsp; 其中噪声从一个均值非零，标准差非一的分布中采样得来，而该分布的均值与方差由另一个分布中采样而来。注意在每一个时间步t中，都要重复采样一次。
 > &emsp;&emsp;noise sampled from a non-zero mean and non-unit variance distribution. We emphasize that this noise distribution changes at each time step.
 
 &emsp;&emsp;实验目的：ICS与训练效果是否有直接联系？
 &emsp;&emsp;文章设计实验二：考虑两个网络，VGG与无激活函数的线性深度网络DLN。定义第$i$层中间层在第$t$次更新时的ICS为$||G_{t,i}-G^{\prime}_{t,i}||_2$，其中：
+
 $$
 \begin{align}
 &G_{t,i}=\nabla_{W_i^{t}}\mathcal{L}(W_1^{t},...,W_k^{t};x^{t},y^{t}) \\
