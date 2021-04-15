@@ -21,7 +21,7 @@ $$
 
  <div align=center><img src="./figs/BN3.jpg" width = 60%/></div>
 
-&emsp;&emsp;Batch Normalization层算法整体分成两步，第一步计算一个Batch中的均值与方差对输入数据做标准化，第二步对标准化数据做scale与shift，即缩放与平移。其中的$\beta$与$\gamma$是通过学习得来的，第二步的原因见3。
+&emsp;&emsp;Batch Normalization层算法整体分成两步，第一步计算一个Batch中的均值与方差对输入数据做标准化，第二步对标准化数据做scale与shift，即缩放与平移。其中的$\beta$与$\gamma$是通过学习得来的。
 &emsp;&emsp;Batch Normalization在预测阶段所有参数都是固定值，$\beta$和$\gamma$随着训练结束，两者最终收敛，预测阶段使用训练结束时的值。对于$\mu$和$\sigma$，在训练阶段，它们为当前mini batch的统计量。在预测阶段则采用训练收敛最后几批mini batch的 $\mu$和$\sigma$的期望，作为预测阶段的$\mu$和$\sigma$。
 <div align=center><img src="./figs/BN4.png" width="60%"></div>
 
@@ -62,7 +62,37 @@ Sigmoid: \ f(x)=\frac{1}{1+e^{-x}}
 $$
  <div align=center><img src='./figs/sigmoid.png' width=70%></div>
 
-#### 3. Result
+#### 4. Result
 
-&emsp;&emsp;结论：BN层加速收敛，泛化能力(test acc)，更高的学习率(w/oBN高的学习率发散不收敛) \
+* 加速训练收敛
+* 提高泛化能力(变相添加正则化)
+* 适应范围更大的学习率(w/oBN较高的学习率发散不收敛) 
+* 防止梯度爆炸/梯度消失
+* 依赖Batch Size大小，Batch Size太小时效果不好
 
+#### 5.Why Batch Normalization Work?
+
+#### 6.Q&A
+* 为什么需要$\beta$与$\gamma$，即为什么需要scale and shift过程？
+
+&emsp;&emsp;BatchNorm有两个过程，Standardization和scale and shift，前者将mini batch数据进行标准化，而后者则负责恢复数据本身携带的信息，试想没有最后的scale and shift过程，所有batch的输入数据都会被标准化，标准化本身有利于更新权重，因为所有输入的数据分布近乎一致，不标准化有利于保护数据本身分布所携带的信息。**而scale and shift就是在分布与权重之间实现平衡**，考虑$\gamma$=1,$\beta$=0等价于只用Standardization，令$\gamma$=$\sigma$,$\beta$=$\mu$等价于没有BN层，在训练过程中让loss决定什么样的分布是何时的。
+
+* BN层放在ReLU前面还是后面？
+
+&emsp;&emsp;Sigmoid激活函数具有饱和性可能造成梯度消失，那对于具有右饱和性的ReLU激活函数呢来说，BN层放在其前面还是后面。Batch Noralization原文建议将BN层放在ReLU之前，因为ReLU激活函数的输出非负，不能近似为高斯分布。
+> &emsp;&emsp;The goal of Batch Normalization is to achieve a stable distribution of activation values throughout training, and in our experiments **we apply it before the nonlinearity since that is where matching the first and second moments is more likely to result in a stable distribution.**
+
+&emsp;&emsp;但在 [caffenet-benchmark](https://github.com/ducha-aiki/caffenet-benchmark#batch-normalization)中，作者基于caffenet在ImageNet上做了对比实验，实验表明，放在前后的差异似乎不大，甚至放在ReLU后还好一些。
+|Name|Accuracy|LogLoss|Comments|
+|:------|:-----:|:-----:|:-----:|
+|Before|0.474|2.35|As in Paper|
+|Before+scale&bias layer|0.478|2.33|As in Paper|
+|After|**0.499**|**2.21**||
+|After+scale&bias layer|0.493|2.24||
+
+---
+#### Ref
+[Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift(arXiv)](https://arxiv.org/abs/1502.03167) 
+[How Does Batch Normalization Help Optimization?(NIPS-2018)](https://arxiv.org/abs/1805.11604) 
+[Understanding Batch Normalization(NIPS-2018)](https://arxiv.org/abs/1806.02375)
+[An Empirical Analysis of theOptimization of Deep Network Loss Surfaces](https://arxiv.org/abs/1612.04010)
