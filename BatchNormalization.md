@@ -22,8 +22,19 @@ $$
  <div align=center><img src="./figs/BN3.jpg" width = 60%/></div>
 
 &emsp;&emsp;Batch Normalization层算法整体分成两步，第一步计算一个Batch中的均值与方差对输入数据做标准化，第二步对标准化数据做scale与shift，即缩放与平移。其中的$\beta$与$\gamma$是通过学习得来的，第二步的原因见3。
+&emsp;&emsp;Batch Normalization在预测阶段所有参数都是固定值，$\beta$和$\gamma$随着训练结束，两者最终收敛，预测阶段使用训练结束时的值。对于$\mu$和$\sigma$，在训练阶段，它们为当前mini batch的统计量。在预测阶段则采用训练收敛最后几批mini batch的 $\mu$和$\sigma$的期望，作为预测阶段的$\mu$和$\sigma$。
+<div align=center><img src="./figs/BN4.png" width="60%"></div>
 
-#### 2. Why use Batch Normalization
+#### 2.Batch Normalization in Conv
+&emsp;&emsp; 假设一个卷积层输入的size为[b,c,h,w]，其中b为batch size，c为channel数，h与w为featuremap大小。Batch Normalization按照通道数计算$\mu$与$\sigma$即：
+$$
+\mu_i = \frac{1}{b\times h\times w}\sum_{b,h,w}Input(b,i,h,w) \in \mathbb{R}^1 \\
+\mu = [\mu_1,\mu_2,...,\mu_c] \in \mathbb{R}^c
+$$
+&emsp;&emsp; 同理$\sigma \in \mathbb{R}^c$。
+
+
+####  3. Why use Batch Normalization
 
 &emsp;&emsp;考虑一般网络结构：
 <div align=center><img src='./figs/BN1.jpg' width=100%></div>
