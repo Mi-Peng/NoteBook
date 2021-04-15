@@ -1,5 +1,5 @@
 ## Batch Normalization
----
+
 ### 1. What is Batch Normalization
 
 &emsp;&emsp;传统机器学习/统计分析中，一般要对输入的feature/data做scale，常见的方法有：
@@ -69,11 +69,16 @@ $$
 * 防止梯度爆炸/梯度消失
 * 依赖Batch Size大小，Batch Size太小时效果不好
 
-### 5.Why Batch Normalization Work?
+### 5.Why Batch Normalization Work? 
+
 &emsp;&emsp;按照BN原文的解释(本文前3章)，BN减轻了层之间输入的Internal Covariate Shift。但：
+
 * **[How Does Batch Normalization Help Optimization?](https://arxiv.org/abs/1805.11604)**
+
 &emsp;&emsp;**摘要：**文章针对BN原文的ICS假象提出质疑，实验表明，BN层并不能减轻ICS。实际上BN平滑了网络的解空间。
+
 &emsp;&emsp;实验目的：控制输入数据的均值与方差是否直接关系到训练效果？
+
 &emsp;&emsp;文章设计实验一：在BN层之后，在激活函数之前，在每一个时间步给数据增加一个噪音。此举会严重抖动数据，数据分布变得更加杂乱无章，十分不稳定。在每一个时间步，每一个中间层都接受一个**不同**的数据分布。实验结果表明，BN with Noise 与BN表现相差无几。
 <div align=center><img src="./figs/BN5.png"></div>
 &emsp;&emsp; 其中噪声从一个均值非零，标准差非一的分布中采样得来，而该分布的均值与方差由另一个分布中采样而来。注意在每一个时间步t中，都要重复采样一次。
