@@ -70,6 +70,33 @@ $$
 * 依赖Batch Size大小，Batch Size太小时效果不好
 
 ### 5.Why Batch Normalization Work?
+&emsp;&emsp;按照BN原文的解释(本文前3章)，BN减轻了层之间输入的Internal Covariate Shift。但：
+* **[How Does Batch Normalization Help Optimization?](https://arxiv.org/abs/1805.11604)**
+&emsp;&emsp;**摘要：**文章针对BN原文的ICS假象提出质疑，实验表明，BN层并不能减轻ICS。实际上BN平滑了网络的解空间。
+&emsp;&emsp;实验目的：控制输入数据的均值与方差是否直接关系到训练效果？
+&emsp;&emsp;文章设计实验一：在BN层之后，在激活函数之前，在每一个时间步给数据增加一个噪音。此举会严重抖动数据，数据分布变得更加杂乱无章，十分不稳定。在每一个时间步，每一个中间层都接受一个**不同**的数据分布。实验结果表明，BN with Noise 与BN表现相差无几。
+<div align=center><img src="./figs/BN5.png"></div>
+&emsp;&emsp; 其中噪声从一个均值非零，标准差非一的分布中采样得来，而该分布的均值与方差由另一个分布中采样而来。注意在每一个时间步t中，都要重复采样一次。
+> &emsp;&emsp;noise sampled from a non-zero mean and non-unit variance distribution. We emphasize that this noise distribution changes at each time step.
+
+&emsp;&emsp;实验目的：ICS与训练效果是否有直接联系？
+&emsp;&emsp;文章设计实验二：考虑两个网络，VGG与无激活函数的线性深度网络DLN。定义第$i$层中间层在第$t$次更新时的ICS为$||G_{t,i}-G^{\prime}_{t,i}||_2$，其中：
+$$
+\begin{align}
+&G_{t,i}=\nabla_{W_i^{t}}\mathcal{L}(W_1^{t},...,W_k^{t};x^{t},y^{t}) \\
+&G_{t,i}^{\prime}=\nabla_{W_i^{(t)}}\mathcal{L}(W_1^{t+1},...,W_{i-1}^{t+1},W_i^t,..,W_k^t;x^{t},y^{t})
+\end{align}
+$$
+
+> &emsp;&emsp;$G_{t,i}$ corresponds to the gradient of the layer parameters that would be applied during a simultaneous update of all layers (as is typical). On the other hand, $G^{\prime}_{t,i}$ is the same gradient after all the previous layers have been updated with their new values.
+
+
+
+* **[Understanding Batch Normalization(NIPS-2018)](https://arxiv.org/abs/1806.02375)**
+
+* **[An Empirical Analysis of theOptimization of Deep Network Loss Surfaces](https://arxiv.org/abs/1612.04010)**
+
+
 
 待续 + BN backward
 
