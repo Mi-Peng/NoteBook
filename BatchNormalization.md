@@ -75,7 +75,7 @@ $$
 
 * **[How Does Batch Normalization Help Optimization?](https://arxiv.org/abs/1805.11604)**
 
-&emsp;&emsp;**摘要：**文章针对BN原文的ICS假象提出质疑，实验表明，BN层并不能减轻ICS。实际上BN平滑了网络的解空间。
+&emsp;&emsp;摘要：文章针对BN原文的ICS假象提出质疑，实验表明，BN层并不能减轻ICS。实际上BN平滑了网络的解空间。
 
 &emsp;&emsp;实验目的：控制输入数据的均值与方差是否直接关系到训练效果？
 
