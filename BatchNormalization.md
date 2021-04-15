@@ -5,14 +5,21 @@
 
 传统机器学习/统计分析中，一般要对输入的feature/data做scale，常见的方法有：
 
-* 线性归一化(Min-Max Scaling)      $\widehat{x}=\frac{x-x_{min}}{x_{max}-x_{min}}$
+* 线性归一化(Min-Max Scaling)      
+  $$
+  \widehat{x}=\frac{x-x_{min}}{x_{max}-x_{min}}
+  $$
 
-* 0均值标准化(Z-score standardization) $z=\frac{x-\mu}{\sigma}$
+* 0均值标准化(Z-score standardization) 
+  $$
+  z=\frac{x-\mu}{\sigma}
+  $$
+
 * 直方图均衡化(图像处理)
 
 受数据预处理启发，在每一中间层输入之前都进行预处理：
 
- <div align=center><img src="./figs/BN3.jpg" width = 60%/> 
+ <div align=center><img src="./figs/BN3.jpg" width = 60%/> </div>
 
 ​     Batch Normalization层算法整体分成两步，第一步计算一个Batch中的均值与方差对输入数据做标准化，第二步对标准化数据做scale与shift，即缩放与平移。其中的$\beta$与$\gamma$是通过学习得来的，第二步的原因见3。
 
