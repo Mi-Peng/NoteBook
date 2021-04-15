@@ -72,7 +72,10 @@ $$
 
 #### 5.Why Batch Normalization Work?
 
+待续 + BN backward
+
 #### 6.Q&A
+
 * 为什么需要$\beta$与$\gamma$，即为什么需要scale and shift过程？
 
 &emsp;&emsp;BatchNorm有两个过程，Standardization和scale and shift，前者将mini batch数据进行标准化，而后者则负责恢复数据本身携带的信息，试想没有最后的scale and shift过程，所有batch的输入数据都会被标准化，标准化本身有利于更新权重，因为所有输入的数据分布近乎一致，不标准化有利于保护数据本身分布所携带的信息。**而scale and shift就是在分布与权重之间实现平衡**，考虑$\gamma$=1,$\beta$=0等价于只用Standardization，令$\gamma$=$\sigma$,$\beta$=$\mu$等价于没有BN层，在训练过程中让loss决定什么样的分布是何时的。
