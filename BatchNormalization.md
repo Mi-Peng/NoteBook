@@ -6,14 +6,14 @@
 &emsp;&emsp;传统机器学习/统计分析中，一般要对输入的feature/data做scale，常见的方法有：
 
 * 线性归一化(Min-Max Scaling)      
-	$$
-	\widehat{x}=\frac{x-x_{min}}{x_{max}-x_{min}}
-	$$
+$$
+\widehat{x}=\frac{x-x_{min}}{x_{max}-x_{min}}
+$$
 
 * 0均值标准化(Z-score standardization) 
-	$$
-	z=\frac{x-\mu}{\sigma}
-	$$
+$$
+z=\frac{x-\mu}{\sigma}
+$$
 
 * 直方图均衡化(图像处理)
 
