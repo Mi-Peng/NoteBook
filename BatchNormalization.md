@@ -1,7 +1,6 @@
-### Batch Normalization
-
+## Batch Normalization
 ---
-#### 1. What is Batch Normalization
+### 1. What is Batch Normalization
 
 &emsp;&emsp;传统机器学习/统计分析中，一般要对输入的feature/data做scale，常见的方法有：
 
@@ -25,7 +24,7 @@ $$
 &emsp;&emsp;Batch Normalization在预测阶段所有参数都是固定值，$\beta$和$\gamma$随着训练结束，两者最终收敛，预测阶段使用训练结束时的值。对于$\mu$和$\sigma$，在训练阶段，它们为当前mini batch的统计量。在预测阶段则采用训练收敛最后几批mini batch的 $\mu$和$\sigma$的期望，作为预测阶段的$\mu$和$\sigma$。
 <div align=center><img src="./figs/BN4.png" width="60%"></div>
 
-#### 2.Batch Normalization in Conv
+### 2.Batch Normalization in Conv
 &emsp;&emsp; 假设一个卷积层输入的size为[b,c,h,w]，其中b为batch size，c为channel数，h与w为featuremap大小。Batch Normalization按照通道数计算$\mu$与$\sigma$即：
 $$
 \mu_i = \frac{1}{b\times h\times w}\sum_{b,h,w}Input(b,i,h,w) \in \mathbb{R}^1 \\
@@ -34,7 +33,7 @@ $$
 &emsp;&emsp; 同理$\sigma \in \mathbb{R}^c$。
 
 
-####  3. Why use Batch Normalization
+###  3. Why use Batch Normalization
 
 &emsp;&emsp;考虑一般网络结构：
 <div align=center><img src='./figs/BN1.jpg' width=100%></div>
@@ -62,7 +61,7 @@ Sigmoid: \ f(x)=\frac{1}{1+e^{-x}}
 $$
  <div align=center><img src='./figs/sigmoid.png' width=70%></div>
 
-#### 4. Result
+### 4. Result
 
 * 加速训练收敛
 * 提高泛化能力(变相添加正则化)
@@ -70,11 +69,11 @@ $$
 * 防止梯度爆炸/梯度消失
 * 依赖Batch Size大小，Batch Size太小时效果不好
 
-#### 5.Why Batch Normalization Work?
+### 5.Why Batch Normalization Work?
 
 待续 + BN backward
 
-#### 6.Q&A
+### 6.Q&A
 
 * 为什么需要$\beta$与$\gamma$，即为什么需要scale and shift过程？
 
@@ -94,8 +93,13 @@ $$
 |After+scale&bias layer|0.493|2.24||
 
 ---
-#### Ref
-[Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift(arXiv)](https://arxiv.org/abs/1502.03167) 
-[How Does Batch Normalization Help Optimization?(NIPS-2018)](https://arxiv.org/abs/1805.11604) 
-[Understanding Batch Normalization(NIPS-2018)](https://arxiv.org/abs/1806.02375)
-[An Empirical Analysis of theOptimization of Deep Network Loss Surfaces](https://arxiv.org/abs/1612.04010)
+### Ref
+* [Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift(arXiv)](https://arxiv.org/abs/1502.03167) 
+
+* [How Does Batch Normalization Help Optimization?(NIPS-2018)](https://arxiv.org/abs/1805.11604) 
+
+* [Understanding Batch Normalization(NIPS-2018)](https://arxiv.org/abs/1806.02375)
+
+* [An Empirical Analysis of theOptimization of Deep Network Loss Surfaces](https://arxiv.org/abs/1612.04010)
+
+* [The Gradient Flow through the Batch Normalization Layer](https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html)
