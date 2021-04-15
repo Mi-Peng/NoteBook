@@ -87,6 +87,7 @@ $$
 > &emsp;&emsp;noise sampled from a non-zero mean and non-unit variance distribution. We emphasize that this noise distribution changes at each time step.
 
 &emsp;&emsp;实验目的：ICS与训练效果是否有直接联系？
+
 &emsp;&emsp;文章设计实验二：考虑两个网络，VGG与无激活函数的线性深度网络DLN。定义第$i$层中间层在第$t$次更新时的ICS为$||G_{t,i}-G^{\prime}_{t,i}||_2$，其中：
 
 $$
