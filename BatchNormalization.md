@@ -73,20 +73,35 @@ $$
 
 * **[How Does Batch Normalization Help Optimization?](https://arxiv.org/abs/1805.11604)**
 
-&emsp;&emsp;摘要：文章针对BN原文的ICS假象提出质疑，实验表明，BN层并不能减轻ICS。实际上BN平滑了网络的解空间。
+&emsp;&emsp;**摘要**：文章针对BN原文的ICS假象提出质疑，实验表明，BN层并不能减轻ICS。实际上BN平滑了网络的解空间进而影响优化效率。
 
-&emsp;&emsp;实验目的：控制输入数据的均值与方差是否直接关系到训练效果？
 
-&emsp;&emsp;文章设计实验一：在BN层之后，在激活函数之前，在每一个时间步给数据增加一个噪音。此举会严重抖动数据，数据分布变得更加杂乱无章，十分不稳定。在每一个时间步，每一个中间层都接受一个**不同**的数据分布。实验结果表明，BN with Noise 与BN表现相差无几。
+&emsp;&emsp;文章设计**实验一**：设计VGG网络，在使用/不使用BN层下在CIFAR10上的效果。
 
-<div align=center><img src="./figs/BN5.png"></div>
+&emsp;&emsp;实验目的：验证BN层是否的确有用？
+
+<div align=center><img src="./figs/BN6.png"></div>
+
+&emsp;&emsp;实验结果：加入BN层的网络训练更快收敛，能适应更大的学习率，测试集误差低，泛化效果好。文章将某一层的网络参数分布进行可视化，发现两者区别并不明显。从而作者思考：BN层真的会减少ICS？ICS又真的会影响训练效果吗？
+
+
+&emsp;&emsp;文章设计**实验二**：在BN层之后，在激活函数之前，在每一个时间步给数据增加一个噪音。此举会严重抖动数据，数据分布变得更加杂乱无章，十分不稳定。在每一个时间步，每一个中间层都接受一个**不同**的数据分布。实验结果表明，BN with Noise 与BN表现相差无几。
+
+&emsp;&emsp;实验目的：控制输入数据的均值与方差是否直接关系到训练效果？ICS与训练效果是否有直接联系？
+
+<div align=center><img src="./figs/BN5.png" width=75%></div>
 
 &emsp;&emsp; 其中噪声从一个均值非零，标准差非一的分布中采样得来，而该分布的均值与方差由另一个分布中采样而来。注意在每一个时间步t中，都要重复采样一次。
 > &emsp;&emsp;noise sampled from a non-zero mean and non-unit variance distribution. We emphasize that this noise distribution changes at each time step.
 
-&emsp;&emsp;实验目的：ICS与训练效果是否有直接联系？
 
-&emsp;&emsp;文章设计实验二：考虑两个网络，VGG与无激活函数的线性深度网络DLN。定义第$i$层中间层在第$t$次更新时的ICS为$||G_{t,i}-G^{\prime}_{t,i}||_2$，其中：
+&emsp;&emsp;实验结果：Noisy BN 与 Standard BN 训练效果无明显区别，ICS对训练的影响并没有想象得那么大。
+
+
+
+&emsp;&emsp;文章设计**实验三**：考虑两个网络，VGG与无激活函数的线性深度网络DLN。定义第$i$层中间层在第$t$次更新时的ICS为$||G_{t,i}-G^{\prime}_{t,i}||_2$，其中：
+
+
 
 $$
 \begin{align}
@@ -98,6 +113,78 @@ $$
 > &emsp;&emsp;$G_{t,i}$ corresponds to the gradient of the layer parameters that would be applied during a simultaneous update of all layers (as is typical). On the other hand, $G^{\prime}_{t,i}$ is the same gradient after all the previous layers have been updated with their new values.
 
 
+&emsp;&emsp;实验目的：BN真的减弱了ICS？
+
+&emsp;&emsp;注意的是DLN中没有激活函数，等价一个线性映射$Y=AX+b$，“由于没有非线性激活层，那么本应当不出现ICS”（并不是很理解这句话）。
+
+<div align=center><img src='./figs/BN7.png' width="80%"></div>'
+
+&emsp;&emsp;实验结果：从上图左一列可以看出，BN层的确对训练有所帮助，图右两列分别是两个网络中间层的参数空间信息：第一行表示梯度更新前后梯度大小变化的$l_2$距离(即前面定义的ICS)(理想值为0)，第二行表示梯度更新前后梯度方向变化的角度$cos$值(理想之为1，即角度为0)；朴素想法即如果没有严重ICS现象，梯度的每一步应当向同样的方向前进相等的大小，但实验结果表明，对于VGG来说，加入BN层ICS变化不明显，对于DLN来说，加入BN层ICS反而变大。BN层并不能降低ICS，反之，他可能增加中间层ICS。（需要注意的是“梯度”指的是Loss对中间层参数的梯度。）
+
+> &emsp;&emsp;This evidence suggests that, from optimization point of view, controlling the distributions layer inputs as done in BatchNorm, might not even reduce the internal covariate shift.
+
+&emsp;&emsp;**以上实验都表明了，BN层的确work，能够帮助训练，但ICS与训练效果无关，BN层并不能降低ICS。**那么，BN层到底是如何优化训练的？
+
+
+
+> &emsp;&emsp;Indeed, we identify the key impact that BatchNorm has on the training process: it reparametrizes the underlying optimization problem to make its landscape significantly more smooth.
+> &emsp;&emsp;The loss changes at a smaller rate and the magnitudes of the gradients are smaller too 
+
+&emsp;&emsp;介绍俩个新的概念：
+
+&emsp;&emsp;**1. 利普希茨常数$\mathcal{L}$**
+
+&emsp;&emsp;&emsp;&emsp;对于函数 $f$ 若存在常数 $L$ 使得对于$\forall x_1,x_2 \in D$有$|f(x_1)-f(x_2)| \leq L|x_1 - x_2|$，则称 $f$ 符合利普希茨条件，对于 $f$ 最小的常数 $L$ 称为 $f$ 的**利普希茨常数**。
+
+&emsp;&emsp;&emsp;&emsp;通俗来说，L-Lipschitz限制了函数的变化速度，符合利普希茨条件的函数斜率一定小于一个实数，即利普希茨常数。$x$ 变化一定量，函数相应变化的量不能非常大。再简单点说就是函数一阶导数要小于一定值。
+
+&emsp;&emsp;**2. $\beta$-smoothness**
+
+&emsp;&emsp;&emsp;&emsp;简单来说，$\beta$-smoothness就是对函数梯度的一阶导数进行限制。见公式：
+
+$$
+||\nabla f(x_1) - \nabla f(x_2)|| \leq \beta ||x_1 - x_2||
+$$
+
+&emsp;&emsp;原文认为BN使得loss landscape更加光滑。试想没有BN层之前的vanil DNN，损失函数不仅非凸，且存在大量“扭结”，平坦区域，尖锐的极小值。显然这会导致难以优化，优化不稳定。
+
+> &emsp;&emsp;the loss function is not only non-convex but also tends to have a large number of “kinks”, flat regions, and sharp minima.
+
+&emsp;&emsp;BN层使得loss landscape更加平滑（见原文👇）
+
+> &emsp;&emsp;After all, improved Lipschitzness of the gradients gives us confidence that when we take a larger step in a direction of a computed gradient, this gradient direction remains a fairly accurate estimate of the actual gradient direction after taking that step.
+
+&emsp;&emsp;这也就意味着我们能够用更大的学习率而不必担心最优的loss方向突然变化导致不稳定。
+
+> &emsp;&emsp;It thus enables any (gradient–based) training algorithm to take larger steps without the danger of running into a sudden change of the loss landscape such as flat region (corresponding to vanishing gradient) or sharp local minimum (causing exploding gradients).
+
+&emsp;&emsp;为了验证这个说法，文章设计在with BN 与without BN的情况下对VGG网络进行训练。
+
+<div align=center><img src='./figs/BN9.png'></div>
+
+<div align=center><img src='./figs/BN8.png', width='80%'></div>
+
+&emsp;&emsp;fig(a)：在训练中的每一个step，计算当前step损失函数的方向，沿着这个方向走下去的loss变化范围；注意图中不是曲线。
+
+> &emsp;&emsp;To demonstrate the impact of BatchNorm on the stability of the loss itself, i.e., its Lipschitzness, for each given step in the training process, we compute the gradient of the loss at that step and measure how the loss changes as we move in that direction – see Figure 4(a)
+
+&emsp;&emsp;fig(b)：训练过程中某点的损失函数梯度，与上一个梯度方向不同的点的L2距离变化。
+
+> &emsp;&emsp;Similarly, to illustrate the increase in the stability and predictiveness of the gradients, we make analogous measurements for the $l_2$ distance between the loss gradient at a given point of the training and the gradients corresponding to different points along the original gradient direction.
+
+&emsp;&emsp;fig(c)：沿着梯度方向上，梯度的 $\beta$ 常数范围。
+
+> &emsp;&emsp;To further demonstrate the effect of BatchNorm on the stability/Lipschitzness of the gradients of the loss, we plot in Figure 4(c) the “effective” β-smoothness of the vanilla and BatchNorm networks throughout the training. (“Effective” refers here to measuring the change of gradients as we move in the direction of the gradients.).
+
+&emsp;&emsp;针对之前的实验三，有没有BN层对VGG来说，ICS指标变化不大，也就是说两者的参数更新前后梯度L2变化不大，角度变化的区别不大。withoutBN的损失函数陡峭不规则（下图左），造成他的梯度要来回变化，那按照这里的解释，withBN的损失函数平滑许多（下图右），那为什么他的梯度大小还要来回变化，方向来回变化？梯度方向不应该变化比较小吗？
+
+&emsp;&emsp;猜测可能是它是“螺旋”下降，虽然“绝对”方向在变，但相对来说都是向下的，不像左图一样会跳出该点跑到别的地方？
+
+<div align=center><img src='./figs/BN10.png', width='60%'></div>
+
+&emsp;&emsp;那是否只有Batch Normalization一种方法优化损失函数空间/或是Batch Normalization就是最好的？文章用 $L_p$ 正则化代替BN也达到了类似的效果。
+
+&emsp;&emsp;**理论分析**，原文考虑一个Vanilla Network与Vanilla Network + BatchNorm Layer的损失函数区别。最终得出，加入BN层之后，损失函数梯度有一个相应的上界（L-Lipschitzness）即损失函数更加利普希兹，引入了 BN 后，损失函数相对于激活函数值的二阶项幅值更小，也即损失函数更加贝塔平滑。
 
 * **[Understanding Batch Normalization(NIPS-2018)](https://arxiv.org/abs/1806.02375)**
 
@@ -128,6 +215,7 @@ $$
 
 ---
 ### Ref
+
 * [Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift(arXiv)](https://arxiv.org/abs/1502.03167) 
 
 * [How Does Batch Normalization Help Optimization?(NIPS-2018)](https://arxiv.org/abs/1805.11604) 
@@ -137,3 +225,9 @@ $$
 * [An Empirical Analysis of theOptimization of Deep Network Loss Surfaces](https://arxiv.org/abs/1612.04010)
 
 * [The Gradient Flow through the Batch Normalization Layer](https://kratzert.github.io/2016/02/12/understanding-the-gradient-flow-through-the-batch-normalization-layer.html)
+
+* [《How Does Batch Normalization Help Optimization》笔记——CapsulE](https://zhuanlan.zhihu.com/p/72912402)
+
+* [论文|How Does Batch Normalizetion Help Optimization——Estyle](https://zhuanlan.zhihu.com/p/66683061)
+
+* [How Does Batch Normalization Help Optimization?——cnblogs](https://www.cnblogs.com/seniusen/p/10795297.html)
