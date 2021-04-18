@@ -188,6 +188,60 @@ $$
 
 * **[Understanding Batch Normalization(NIPS-2018)](https://arxiv.org/abs/1806.02375)**
 
+&emsp;&emsp;**摘要**:XXXXXXXX
+
+&emsp;&emsp;**第一节**设计实验验证BN层到底有没有用？Resnet110+SGD
+
+<div align=center><img src='./figs/paper2_1.png'></div>
+
+&emsp;&emsp;实验结果也表明了BN层的确对训练有所帮助，更高的学习率，更快收敛，泛化能力好。
+
+&emsp;&emsp;**第二节**针对SGD模型考虑经验化的理论分析：
+
+&emsp;&emsp;损失函数有$\ell (x)=\frac{1}{N} \sum_{i=1}^{N}\ell _i(x)$，按照当下batch-SGD算法，考虑batch下集合$B$为数据集一个子集，学习率$\alpha$，则每一步梯度更新$\alpha \nabla_{SGD}(x) = \frac{\alpha}{|B|} \sum_{i \in B} \nabla \ell _i(x)$。对该式做简单加减有：
+
+$$
+\alpha \nabla_{SGD}(x) = \underbrace{ \alpha \nabla \ell (x) }_{gradient} + \underbrace{\frac{\alpha}{|B|}\sum_{i \in B}(\nabla \ell _i(x) - \nabla \ell (x))}_{error term}
+$$
+
+&emsp;&emsp;考虑到前部分为原本梯度更新大小，后半部分为误差项，由于我们只在一个batch种做求和平均操作，所以一定程度上，梯度的更新与true gradient有一定误差，相当于引入了噪音。由于我们batch对数据集均匀采样，所以我们对梯度的估计为无偏估计，即：
+
+$$
+\mathbb{E}[\frac{\alpha}{|B|}\sum_{i \in B}(\nabla \ell _i(x) - \nabla \ell (x))]=0
+$$
+
+&emsp;&emsp;取噪声部分为$C=\mathbb{E}[||\nabla \ell _i (x) - \nabla \ell  (x)||^2]$，附录D，可推出上界：
+$$
+\mathbb{E}[||\alpha \nabla \ell (x) - \alpha \nabla_{SGD}(x)||^2] \leq \frac{\alpha ^2}{|B|}C
+$$
+
+&emsp;&emsp;从这个上界可以看出，学习率越大，batch size越小，SGD梯度上界就越大，梯度更有可能跳到“更远”的地方。
+
+> &emsp;&emsp; it is empirically demonstrated that large mini-batches lead to convergence in sharp minima, which often generalize poorly. 
+> &emsp;&emsp;The intuition is that larger SGD noise from smaller mini-batches prevents the network from getting “trapped” in sharp minima and therefore bias it towards wider minima with better generalization. Our observation implies that SGD noise is similarly affected by the learning rate as by the inverse mini-bath size, suggesting that a higher learning rate would similarly bias the network towards wider minima.
+
+&emsp;&emsp;那么Batch Normalization又是如何影响学习率，使得高的学习率不会发散？
+
+&emsp;&emsp;由于在大的学习率下，without BN网络在最初几个step很容易发散，所以文章选择最初的梯度幅度分布。具体而言，原文选择最开始的第55层卷积核的梯度幅值分布。
+
+<div align=center><img src='./figs/paper2_2.png'></div>
+
+
+&emsp;&emsp;除此之外，考虑沿着梯度方向的relative loss(i.e. new_loss/old_loss)随着step-size变化的曲线如下。
+
+> &emsp;&emsp;A natural way of investigating divergence is to look at the loss landscape along the gradient direction during the first few mini-batches that occur with the normal learning rate (0.1 with BN, 0.0001without).
+
+<div align=center><img src='./figs/paper2_3.png'></div>
+
+&emsp;&emsp;从图中可以看出，随着step-size增大， with BN的relative loss在很大范围内都控制在1以下或附近，而w/o BN很容易远远比1大，且量级不同。（如果relative loss 很大，说明网络“迈出”这一步之后loss明显比上一步要大，说明很容易发散。）
+
+
+&emsp;&emsp;原文考虑without BN网络中间层激活输出的均值与方差变化。其中颜色条指后一层某通道的输出与前一层输出的比值。从图中可以看出，随着step进行，模型发散，均值逐渐偏移，方差逐渐增大，也就是说输出“爆炸”。层数越深的输出，“爆炸”现象明显。
+
+<div align=center><img src='./figs/paper2_4.png'></div>
+
+> &emsp;&emsp;The color bar reveals that the scale of the later layer’s activations and variances is orders of magnitudes higher than the earlier layer. This seems to suggest that the divergence is caused by activations growing progressively larger with network depth, with the network output “exploding” which results in a diverging loss. BN successfully mitigates this phenomenon by correcting the activations of each channel and each layer to zero-mean and unit standard deviation, which ensures that large activations in lower levels cannot propagate uncontrollably upwards.
+
 * **[An Empirical Analysis of theOptimization of Deep Network Loss Surfaces](https://arxiv.org/abs/1612.04010)**
 
 
