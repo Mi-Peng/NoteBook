@@ -56,4 +56,22 @@ $$
 
 ，我们重复抛掷这个骰子 $n$ 次，结果一点朝上共$m_1$次，二点朝上共$m_2$次，三点朝上$m_3$次，....的概率即为公式$4$ 描述的事情。
 
-> &emsp;&emsp;关于多项式概率分布的解释：一共重复 $n$ 次，$X=i$ 事件共发生了 $m_i$ 次，$X=i$ 事件概率为 $\theta _i$ 。由独立可知概率分布后半部分连乘。又因为只说明了发生次数，但没确定发生顺序，所以要考虑一个排列选择问题：
+> &emsp;&emsp;在此之前，我们了解一下“多项式”：
+> $$
+> (x_1+x_2+...+x_k)^n=\sum \frac{n!}{r_1!r_2!...r_k!}x_1^{r_1}x_2^{r_2}...x_k^{r_k}
+> $$
+>
+> $$
+> \begin{align}
+> (x_1+x_2+...+x_k)^n&=\underbrace {(x_1+x_2+...+x_k)...(x_1+x_2+...+x_k)} _{n} \\
+>                    &=\sum_{r_1,r_2,...,r_K}^{n} C_n^{r_1}C_{n-r_1}^{r_2}C_{n-r_1-r_2}^{r_3}...x_1^{r_1}x_2^{r_2}...x_k^{r_k} \\
+>                    &=\sum_{r_1,r_2,...,r_K}^{n}  \left( \frac{n!}{(n-r_1)!} \frac{1}{r_1!}\right) \cdot \left( \frac{(n-r_1)!}{(n-r_1-r_2)!}\frac{1}{r_2!}\right) \cdot...\cdot \left( \frac{{(n-r_1-..-r_{k-1})}!}{(n-r_1-..-r_{k-1}-r_k)!}\frac{1}{r_k!} \right) \cdot x_1^{r_1}x_2^{r_2}...x_k^{r_k}   \\
+>                    &=\sum_{r_1,r_2,...,r_K}^{n}  \frac{1}{r_1!} \frac{1}{r_2!} \cdot \cdot \cdot \frac{1}{r_k!} \cdot \frac{n!}{(n-r_1-..-r_{k-1}-r_k)!}\cdot x_1^{r_1}x_2^{r_2}...x_k^{r_k}  \\
+>                    & \because \sum_i^k r_i = n \\
+>                原式&=\sum_{r_1,r_2,...,r_K}^{n}  \frac{1}{r_1!} \frac{1}{r_2!} \cdot \cdot \cdot \frac{1}{r_k!} \cdot \frac{n!}{0!}\cdot x_1^{r_1}x_2^{r_2}...x_k^{r_k}  \\
+>                    &=\sum_{r_1,r_2,...,r_K}^{n} \frac{n!}{r_1!r_2!...r_k!}x^{r_1}x^{r_2}...x^{r_k}
+> \end{align}
+> $$
+>
+> &emsp;&emsp;可以看出多项式分布的“多项式”名字的来源。关于多项式概率分布的解释：一共重复 $n$ 次，$X=i$ 事件共发生了 $m_i$ 次，$X=i$ 事件概率为 $\theta _i$ 。
+
