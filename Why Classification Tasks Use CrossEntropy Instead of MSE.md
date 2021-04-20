@@ -1,5 +1,4 @@
 # Why Classification Tasks Use CrossEntropy Instead of MSE
-
 ---
 
 &emsp;&emsp;常见的解释有从sigmoid的导数角度出发的：
@@ -75,61 +74,65 @@ $$
 >
 > &emsp;&emsp;可以看出多项式分布的“多项式”名字的来源。把上面多项式中的$x_i$ 换成$\theta_i$，就可以发现多项式分布的离散概率分布即多项式展开式中的一个子项。多项式展开式的子项，描述多项式相乘时，每一次只能取括号种的一个项，一共取$n$次，前面的系数即有多少种取法。
 
+
+
+&emsp;&emsp;我们考虑多项式分布 **$\theta$** 的对数似然函数:
+$$
+\mathcal{L}(\theta)=\frac{n!}{m_1!m_2!...m_K!}\theta _1^{m_1}\theta _2^{m_2}...\theta _K^{m_K} \\
+
+\begin{align}
+\theta ^*&=arg\max _\theta \ log(\mathcal{L}(\theta)) \\
+         &=arg\max _\theta\left[log(\frac{n!}{m_1!m_2!...m_K!}) + m_1\cdot log(\theta_1)+m_2\cdot log(\theta_2)  + ...+ m_K\cdot log(\theta_K)\right] \\
+         &=arg\max_\theta \left[log(\frac{n!}{m_1!m_2!...m_K!}) +\sum_i^K m_ilog(\theta _i)\right] \\
+         &=arg\max_\theta \sum_i^K m_ilog(\theta _i) \\
+         & s.t. \sum_i^K\theta_i=1
+\end{align}
+$$
+
+
+
 &emsp;&emsp;我们回顾交叉熵：
 $$
 \mathcal{Loss}=\sum_i^K -y_ilog(p_ {\theta _i}(x))
 $$
 
-&emsp;&emsp;我们模型所学习的即找一个网络参数$\theta^*$ 使模型交叉熵最小：
+&emsp;&emsp;由于$y_i$考虑为概率，给交叉熵右侧乘一个$N$ 结果与多项式分布的极大似然估计一致。
+
+&emsp;&emsp;分类任务使用交叉熵作为$\mathcal{Loss}$对模型参数进行训练与对多项式分布做极大似然是一样的。
+
+&emsp;&emsp;那我们再看一下高斯分布：
 
 $$
+p(x) \sim \mathcal{N}(\mu,\sigma) \\
+P(X=x)=\frac{1}{\sqrt{(2\pi)\cdot\sigma^2}}\cdot exp\{-\frac{(x-\mu)^2}{2\sigma^2}\}
+$$
+
+
+
+&emsp;&emsp;最大似然函数有：
+$$
+\mathcal{L}(\theta)=\frac{1}{\sqrt{(2\pi)\cdot\sigma^2}}\cdot exp\{-\frac{(x-\mu)^2}{2\sigma^2}\} \\
 \begin{align}
-\theta^* &= \arg\min_{\theta} \mathcal{Loss} \\
-       &= \arg \min_{\theta} \frac{1}{|B|}\sum_{x\in B}\sum_i^K -y_ilog(p(x|\theta))
+\theta ^*&=arg\max _\theta \ log(\mathcal{L}(\theta)) \\
+         &=arg\max _\theta\left[-\frac{1}{2}log(2\pi\cdot \sigma^2) -\frac{(x-\mu)^2}{2\sigma^2}\right] \\
+         &=arg\max_\theta -\frac{(x-\mu)^2}{2\sigma^2}\\
+&(\theta=[\mu, \sigma]^T)
 \end{align}
 $$
 
 
-&emsp;&emsp;其中$y_i$ 为$label$，$p_ {\theta _i}(x)$为模型输出的所有类别概率值。那么这是不是多项式分布的最大似然估计？我们考虑多项式分布 **$\theta$** 的对数似然函数:
-$$
-\mathcal{L}(\theta|X)=\frac{n!}{m_1!m_2!...m_K!}\theta _1^{m_1}\theta _2^{m_2}...\theta _K^{m_K} \\
 
-\begin{align}
-log(\mathcal{L}(\theta|X))&=log(\frac{n!}{m_1!m_2!...m_K!}) + m_1\times log(\theta_1)+m_2\times log(\theta_2)  + ...+ m_K\times log(\theta_K) \\
-&=log(\frac{n!}{m_1!m_2!...m_K!}) +\sum_i^K m_ilog(\theta _i)
-\end{align}
-$$
-
-&emsp;&emsp;我们的$label$是 one-hot向量，即，认为只有$label$对应的事件发生概率为1，其余事件概率为0；只进行一次试验（$n=1$ 的情况下 只有$m_{label}=1$ ，其余为0）我们希望我们的分布输出能够尽可能与这种情况相符，也即：
+&emsp;&emsp;我们假设一共 $K$ 类，$\hat{y}(x)\in \mathbb{R}^K$ 为模型输出概率，各维度元素均服从高斯分布且相互独立,，$y\in \mathbb{R}^K$ 为真实值。那么MSE又发生了什么？MSE：均方误差
 
 $$
-\begin{align}
-\theta^* &= \arg\max_{\theta} log(\mathcal{L}(\theta|X)) \\
-         &= \arg \max_{\theta}log(\frac{n!}{m_1!m_2!...m_K!}) +\sum_i^K m_ilog(\theta _i) \\
-         &= \arg \max_{\theta}\sum_i^K m_ilog(\theta _i) \\
-         &= \arg \max_{\theta} m_j \times log(\theta_j)
-\end{align}
+MSE=\frac{\sum_{x}||\hat{y}(x)-y||^2}{2n}
 $$
 
+&emsp;&emsp;其中 $y$ 为真实值，$\hat{y}(x)$ 为模型预测值。
 
-&emsp;&emsp;已知试验结果为"$label$"项对应的事件下对这个多项式分布做极大似然估计，得出这个多项式分布的参数的过程即等价于$label$事件发生的概率为1，与分类任务使用交叉熵作为$\mathcal{Loss}$对模型参数进行训练做的是同样的过程。
-
-&emsp;&emsp;那么MSE又发生了什么？
-
-$$
-p(y|x) \sim \mathcal{N}(\mu,\sigma) \\
-p(y|x)=\frac{1}{\sqrt{(2\pi)\cdot\sigma^2}}\cdot exp\{-\frac{(x-\mu)^2}{2\sigma^2}\}
-$$
-
-&emsp;&emsp;其对数似然函数有：
-$$
-log(\mathcal{L}(\mu,\sigma|X))=-\frac{1}{2}log2\pi - log(\sigma) -\frac{(x-\mu)^2}{2\sigma^2}\
-$$
-
-&emsp;&emsp;最后一项等价于MSE损失函数。
+&emsp;&emsp;可以看出最后一项等价于MSE损失函数。分类任务使用MSE作为$\mathcal{Loss}$对模型参数进行训练与对高思分布做极大似然是一样的。
 
 ### Ref
-
 ---
 * [最大似然估计，MSE Loss和高斯分布](https://zhuanlan.zhihu.com/p/258961357) 
 
