@@ -78,8 +78,10 @@ $$
 &emsp;&emsp;我们考虑多项式分布 **$\theta$** 的对数似然函数:
 
 $$
-\mathcal{L}(\theta)=\frac{n!}{m_1!m_2!...m_K!}\theta _1^{m_1}\theta _2^{m_2}...\theta _K^{m_K} \\
+\mathcal{L}(\theta)=\frac{n!}{m_1!m_2!...m_K!}\theta _1^{m_1}\theta _2^{m_2}...\theta _K^{m_K} 
+$$
 
+$$
 \begin{align}
 \theta ^*&=arg\max _\theta \ log(\mathcal{L}(\theta)) \\
          &=arg\max _\theta\left[log(\frac{n!}{m_1!m_2!...m_K!}) + m_1\cdot log(\theta_1)+m_2\cdot log(\theta_2)  + ...+ m_K\cdot log(\theta_K)\right] \\
