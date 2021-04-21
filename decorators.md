@@ -97,38 +97,86 @@ Traceback (most recent call last):
 
 
 ```python
-@func1
-def func():
-    print('Hello World.')
+import time
+
+def time_cal(func):
+    def warpper():
+        t1 = time.time()
+        func()
+        t2 = time.time()
+        print('Use time:', t2 - t1)
+    return warpper
+
+@time_cal
+def myfunc():
+    print('Hello World')
+ 
+myfunc()
+'''
+Hello World
+Use time: 0.0
+'''
 ```
 
-装饰器不应该影响函数本身的作用。
+&emsp;&emsp;下面的写法与上面的写法是等价的：
 
 ```python
-def func1(func):# 外部闭包函数的参数是要被装饰的函数对象
-    def func2():
-        print('doing func2.')
-        return func()
-    
-@func1    
-def myprint():
-    print('Hello, This is a Print func')
-    
-myprint()
+import time
 
+def time_cal(func):
+    def warpper():
+        t1 = time.time()
+        func()
+        t2 = time.time()
+        print('Use time:', t2 - t1)
+    return warpper
+
+def myfunc():
+    print('Hello World')
+    
+myfunc = time_cal(myfunc)
+
+myfunc()
 '''
-doing func2.
-Hello, This is a Print func
+Hello World
+Use time: 0.0
 '''
 ```
 
+&emsp;&emsp;多个装饰器：需要注意的是使用@语法糖和使用闭包调用的顺序是有区别的，@语法糖顺序调用，闭包直接调用更像是栈。（建议思想实验走一遍函数执行顺序）
+```python
+def decorator_a(func):
+    print('Get in Dec_A')
+    def warpper():
+        print('This is decorator A.')
+        func()
+    return warpper
 
 
+def decorator_b(func):
+    print('Get in Dec_B')
+    def warpper():
+        print('This is decorator B.')
+        func()
+    return warpper
 
+@decorator_a
+@decorator_b
+def myfunc():
+    print('Hello World')
+# myfunc = decorator_b(myfunc)
+# myfunc = decorator_a(myfunc)
 
+myfunc()
 
-
-
+'''
+Get in Dec_B
+Get in Dec_A
+This is decorator A.
+This is decorator B.
+Hello World
+'''
+```
 
 ### Ref
 
