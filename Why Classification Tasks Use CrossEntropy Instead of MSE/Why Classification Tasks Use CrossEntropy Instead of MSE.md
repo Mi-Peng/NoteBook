@@ -1,11 +1,31 @@
 # Why Classification Tasks Use CrossEntropy Instead of MSE
 ---
+&emsp;&emsp;通常，我们使用MSE作为回归任务的损失函数，使用CE作为分类任务的损失函数，对于很多问题回归与分类可以相互转化。（逻辑回归：分类任务回归化；回归问题分类化：年龄预测问题-->年龄段分类问题）具体可见：[知乎： 回归与分类的区别](https://www.zhihu.com/question/21329754) 。那么为什么分类任务不可以用MSE作为损失函数呢？
 
-&emsp;&emsp;常见的解释有从sigmoid的导数角度出发的：
+&emsp;&emsp;通常回归问题的模型输出是整个实数域$(-\infty,+\infty)$，而分类任务常常需要将输出映射到$[0, 1]$的区间上，即赋予其概率意义（这类映射函数都具有饱和性）。
 
-&emsp;&emsp;而我更倾向于另一种解释：
+&emsp;&emsp;**从优化的角度来看：**
 
-&emsp;&emsp;**MSE实际上是高斯分布的极大似然，CrossEntropy是多项式分布的极大似然，分类问题当然是多项式分布。**
+&emsp;&emsp;我们考虑一个二分类问题，模型输出$f(x)$，sigmoid函数$y=\frac{1}{1+e^{-f(x)}}$。我们接下来考虑反向传播，求导数。
+
+&emsp;&emsp;我们考虑sigmoid函数与其导数：
+$$
+f(x) = \frac{1}{1+e^{-x}} \\
+\begin{align}
+\frac{\partial f}{\partial x} &= - \frac{1}{(1+e^{-x})^2} \cdot - e^{-x} \\
+							  &= \frac{e^{-x}}{(1+e^{-x})^2} \\
+							  &= \frac{1}{1+e^{-x}} \cdot \frac{e^{-x}}{1+e^{-x}} \\
+							  &= f(x)\cdot(1-f(x))
+\end{align}
+$$
+
+&emsp;&emsp;函数图像如下：
+
+<div align=center><img src="./sigmoid.png"></div>
+
+&emsp;&emsp;从图中可以看出，sigmoid函数两侧很大范围内梯度都是0，如果我们把一个类别为1的数据错判为0，由于sigmoid函数梯度为0，造成网络梯度消失，很难训练。softmax是sigmoid的扩充，对于多类别下使用softmax会有同样的问题。
+
+&emsp;&emsp;**从概率的角度来看：MSE实际上是高斯分布的极大似然，即认为误差服从高斯分布，从贝叶斯角度来看即引入高斯先验；CrossEntropy是多项式分布（或伯努利分布）的极大似然，分类问题当然是多项式分布。**
 
 &emsp;&emsp;多项式分布是二项分布的推广，在多项式分布之前，先来介绍二项分布与伯努利分布。
 
@@ -131,8 +151,18 @@ $$
 
 &emsp;&emsp;可以看出最后一项等价于MSE损失函数。分类任务使用MSE作为$\mathcal{Loss}$对模型参数进行训练与对高思分布做极大似然是一样的。
 
+&emsp;&emsp;题外话：对于回归问题，从贝叶斯角度来看，我们的数据是理论数据加噪声得来的，在没有任何先验的情况下，引入高斯先验是没有问题的。
+
+
+
+<div align=center><img src="./gaussian.png" width="30%"></div>
+
 ### Ref
 ---
-* [最大似然估计，MSE Loss和高斯分布](https://zhuanlan.zhihu.com/p/258961357) 
+*  [最大似然估计，MSE Loss和高斯分布](https://zhuanlan.zhihu.com/p/258961357) 
 
 * [从最大似然估计理解交叉熵Loss](https://zhuanlan.zhihu.com/p/145967829)
+
+* [为什么二分类不用MSE损失函数](https://jishuin.proginn.com/p/763bfbd2bbb3)
+
+* [机器学习面试之MSE与CE的区别？](https://www.jianshu.com/p/5d13bcd9d990)
