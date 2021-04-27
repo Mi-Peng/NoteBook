@@ -1,5 +1,7 @@
 ## Maximum Likelihood Estimate
 ---
+重要前提：iid
+
 待续：
 [详解最大似然估计（MLE）、最大后验概率估计（MAP），以及贝叶斯公式的理解](https://blog.csdn.net/u011508640/article/details/72815981)
 [从最大似然到EM算法浅解](https://blog.csdn.net/zouxy09/article/details/8537620)
