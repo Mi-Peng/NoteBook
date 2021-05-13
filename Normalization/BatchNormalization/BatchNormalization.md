@@ -23,9 +23,32 @@ $$
 &emsp;&emsp;Batch Normalization层算法整体分成两步，第一步计算一个Batch中的均值与方差对输入数据做标准化，第二步对标准化数据做scale与shift，即缩放与平移。其中的$\beta$与$\gamma$是通过学习得来的。
 
 &emsp;&emsp;Batch Normalization在预测阶段所有参数都是固定值，$\beta$和$\gamma$随着训练结束，两者最终收敛，预测阶段使用训练结束时的值。对于$\mu$和$\sigma$，在训练阶段，它们为当前mini batch的统计量。在预测阶段则采用训练收敛最后几批mini batch的 $\mu$和$\sigma$的期望，作为预测阶段的$\mu$和$\sigma$。
+
 <div align=center><img src="./figs/BN2.png" width="60%"></div>
 
+&emsp;&emsp;假如我要预测一个人的健康状况，我们身高，体重，年龄信息，batchsize为10，输入大小为[10, 3]，我们沿着每个特征维度去计算batch里数据的均值和方差，得到身高的均值方差、体重的均值方差、年龄信息的均值方差做归一化。
+
+| 身高 | 体重 | 年龄 |
+|:----:|:----:|:----:|
+| 150 | 54   | 26   |
+| 60  | 18   | 4    |
+| 160 | 60   | 48   |
+| 177 | 53   | 16   |
+| 180  | 60   | 24   |
+| 192  | 90   | 22   |
+| 172  | 76   | 38   |
+| 168  | 83   | 47   |
+| 172  | 64   | 17   |
+| 180  | 90   | 25   |
+
+&emsp;&emsp;以身高为例，Batch Normalization操作计算均值：
+
+$$
+\mu_1 = \frac{1}{10}(150+60+160+177+180+192+172+168+172+180)=161.1
+$$
+
 ### 2.Batch Normalization in Conv
+
 &emsp;&emsp; 假设一个卷积层输入的size为[b,c,h,w]，其中b为batch size，c为channel数，h与w为featuremap大小。Batch Normalization按照通道数计算$\mu$与$\sigma$即：
 $$
 \mu_i = \frac{1}{b\times h\times w}\sum_{b,h,w}Input(b,i,h,w) \in \mathbb{R}^1 \\
@@ -33,6 +56,8 @@ $$
 $$
 
 &emsp;&emsp; 同理$\sigma \in \mathbb{R}^c$。
+
+&emsp;&emsp; 对比上一章最后的例子;可以看出，Conv2d的BN操作将Channel视为特征，Channel通道对应的FeatureMap在H，W维度取均值作为该通道的特征值。
 
 
 ###  3. Why use Batch Normalization
@@ -259,7 +284,7 @@ $$
 
 * 为什么需要$\beta$与$\gamma$，即为什么需要scale and shift过程？
 
-&emsp;&emsp;BatchNorm有两个过程，Standardization和scale and shift，前者将mini batch数据进行标准化，而后者则负责恢复数据本身携带的信息，试想没有最后的scale and shift过程，所有batch的输入数据都会被标准化，标准化本身有利于更新权重，因为所有输入的数据分布近乎一致，不标准化有利于保护数据本身分布所携带的信息。**而scale and shift就是在分布与权重之间实现平衡**，考虑$\gamma$=1,$\beta$=0等价于只用Standardization，令$\gamma$=$\sigma$,$\beta$=$\mu$等价于没有BN层，在训练过程中让loss决定什么样的分布是何时的。
+&emsp;&emsp;BatchNorm有两个过程，Standardization和scale and shift，前者将mini batch数据进行标准化，而后者则负责恢复数据本身携带的信息，试想没有最后的scale and shift过程，所有batch的输入数据都会被标准化，标准化本身有利于更新权重，因为所有输入的数据分布近乎一致，不标准化有利于保护数据本身分布所携带的信息。**而scale and shift就是在分布与权重之间实现平衡**，考虑$\gamma$=1,$\beta$=0等价于只用Standardization，令$\gamma$=$\sigma$,$\beta$=$\mu$等价于没有BN层，在训练过程中让loss决定什么样的分布是合适的。
 
 * BN层放在ReLU前面还是后面？
 
