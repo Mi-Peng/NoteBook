@@ -49,7 +49,7 @@ $$
 
 &emsp;&emsp;同理我们得到$\mu_2=64.8$，$\mu_3=26.7$，$\sigma_1=35.43$，$\sigma_2=50.54$，$\sigma_3=13.22$  。简单在特征层面做归一化，符合我们的直觉。
 
-### 2.Batch Normalization in Conv
+###### Batch Normalization in Conv
 
 &emsp;&emsp; 假设一个卷积层输入的size为[b,c,h,w]，其中b为batch size，c为channel数，h与w为featuremap大小。Batch Normalization按照通道数计算$\mu$与$\sigma$即：
 $$
@@ -59,10 +59,10 @@ $$
 
 &emsp;&emsp; 同理$\sigma \in \mathbb{R}^c$。
 
-&emsp;&emsp; 对比上一章最后的例子;可以看出，Conv2d的BN操作将Channel视为特征，Channel通道对应的FeatureMap在H，W维度取均值作为该通道特征的值。
+&emsp;&emsp; 对比例子;可以看出，Conv2d的BN操作将Channel视为特征，Channel通道对应的FeatureMap在H，W维度取均值作为该通道特征的值。
 
 
-###  3. Why use Batch Normalization
+###  2. Why use Batch Normalization
 
 &emsp;&emsp;考虑一般网络结构：
 <div align=center><img src='./figs/BN3.png' width=100%></div>
@@ -86,7 +86,7 @@ Sigmoid: \ f(x)=\frac{1}{1+e^{-x}}
 $$
  <div align=center><img src='./figs/sigmoid.png' width=70%></div>
 
-### 4. Result
+### 3. Result
 
 * 加速训练收敛
 * 提高泛化能力(变相正则化)
@@ -94,7 +94,7 @@ $$
 * 防止梯度爆炸/梯度消失
 * 依赖Batch Size大小，Batch Size太小时效果不好
 
-### 5.Why Batch Normalization Work? 
+### 4.Why Batch Normalization Work? 
 
 &emsp;&emsp;按照BN原文的解释(本文前3章)，BN减轻了层之间输入的Internal Covariate Shift。但：
 
@@ -215,7 +215,7 @@ $$
 
 * **[Understanding Batch Normalization(NIPS-2018)](https://arxiv.org/abs/1806.02375)**
 
-&emsp;&emsp;**摘要**:XXXXXXXX
+&emsp;&emsp;**摘要**: 文章同样对BN原文的ICS提出质疑，实验说明了，BN层实际上优化的是优化平面，使其更加平滑。
 
 &emsp;&emsp;**第一节**设计实验验证BN层到底有没有用？Resnet110+SGD
 
@@ -231,7 +231,7 @@ $$
 \alpha \nabla_{SGD}(x) = \underbrace{ \alpha \nabla \ell (x) }_{gradient} + \underbrace{\frac{\alpha}{|B|}\sum_{i \in B}(\nabla \ell _i(x) - \nabla \ell (x))}_{error\ term}
 $$
 
-&emsp;&emsp;考虑到前部分为原本梯度更新大小，后半部分为误差项，由于我们只在一个batch种做求和平均操作，所以一定程度上，梯度的更新与true gradient有一定误差，相当于引入了噪音。由于我们batch对数据集均匀采样，所以我们对梯度的估计为无偏估计，即：
+&emsp;&emsp;考虑到前部分为原本梯度更新大小，后半部分为误差项，由于我们只在一个batch中做求和平均操作，所以一定程度上，梯度的更新与true gradient有一定误差，相当于引入了噪音。由于我们batch对数据集均匀采样，所以我们对梯度的估计为无偏估计，即：
 
 $$
 \mathbb{E}[\frac{\alpha}{|B|}\sum_{i \in B}(\nabla \ell _i(x) - \nabla \ell (x))]=0
@@ -278,11 +278,9 @@ $$
 
 * **[An Empirical Analysis of theOptimization of Deep Network Loss Surfaces](https://arxiv.org/abs/1612.04010)**
 
+    待续 + BN backward + BN pytorch源码
 
-
-待续 + BN backward
-
-### 6.Q&A
+### 5.Q&A
 
 * 为什么需要$\beta$与$\gamma$，即为什么需要scale and shift过程？
 
@@ -319,3 +317,4 @@ $$
 * [论文|How Does Batch Normalizetion Help Optimization——Estyle](https://zhuanlan.zhihu.com/p/66683061)
 
 * [How Does Batch Normalization Help Optimization?——cnblogs](https://www.cnblogs.com/seniusen/p/10795297.html)
+
