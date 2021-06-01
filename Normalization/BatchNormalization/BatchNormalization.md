@@ -18,13 +18,13 @@ $$
 
 &emsp;&emsp;受数据预处理启发，我们在每一中间层输入之前都进行预处理：
 
- <div align=center><img src="./figs/BN1.png" width = 60%/></div>
+ <div align=center><img src="./figs/BN1.png" width = 40%/></div>
 
 &emsp;&emsp;Batch Normalization层算法整体分成两步，第一步计算一个Batch中的均值与方差对输入数据做标准化，第二步对标准化数据做scale与shift，即缩放与平移。其中的$\beta$与$\gamma$是通过学习得来的。
 
 &emsp;&emsp;Batch Normalization在预测阶段所有参数都是固定值，$\beta$和$\gamma$随着训练结束，两者最终收敛，预测阶段使用训练结束时的值。对于$\mu$和$\sigma$，在训练阶段，它们为当前mini batch的统计量。在预测阶段则采用训练收敛最后几批mini batch的 $\mu$和$\sigma$的期望，作为预测阶段的$\mu$和$\sigma$。
 
-<div align=center><img src="./figs/BN2.png" width="60%"></div>
+<div align=center><img src="./figs/BN2.png" width="40%"></div>
 
 &emsp;&emsp;假如我要预测一个人的健康状况，我们身高，体重，年龄信息，batchsize为10，输入大小为[10, 3]，我们沿着每个特征维度去计算batch里数据的均值和方差，得到身高的均值方差、体重的均值方差、年龄信息的均值方差做归一化。
 
@@ -49,7 +49,10 @@ $$
 
 &emsp;&emsp;同理我们得到$\mu_2=64.8$，$\mu_3=26.7$，$\sigma_1=35.43$，$\sigma_2=50.54$，$\sigma_3=13.22$  。简单在特征层面做归一化，符合我们的直觉。
 
-###### Batch Normalization in Conv
+#### *Batch Normalization in Conv
+
+ <div align=center><img src="./figs/all_normalization.png" width = 80%/></div>
+
 
 &emsp;&emsp; 假设一个卷积层输入的size为[b,c,h,w]，其中b为batch size，c为channel数，h与w为featuremap大小。Batch Normalization按照通道数计算$\mu$与$\sigma$即：
 $$
@@ -60,6 +63,16 @@ $$
 &emsp;&emsp; 同理$\sigma \in \mathbb{R}^c$。
 
 &emsp;&emsp; 对比例子;可以看出，Conv2d的BN操作将Channel视为特征，Channel通道对应的FeatureMap在H，W维度取均值作为该通道特征的值。
+
+#### *Batch Normalization Backward
+
+$$
+y=\gamma \cdot \frac{x-\mu}{\sqrt{\sigma^2}} + \beta \\
+\frac{\partial \mathcal{L}}{\partial \mu} = \frac{\partial \mathcal{L}}{\partial y} \cdot \frac{\partial y}{\partial \mu}=\frac{\partial \mathcal{L}}{\partial y} \cdot \gamma \\
+\frac{\partial \mathcal{L}}{\partial \sigma^2} = \frac{\partial \mathcal{L}}{\partial y} \cdot \frac{\partial y}{\partial \sigma^2}=\frac{\partial \mathcal{L}}{\partial y} \cdot 1 \\
+$$
+
+（待续，多元复合函数链式求导 + https://blog.csdn.net/lcczzu/article/details/89519345）
 
 
 ###  2. Why use Batch Normalization
