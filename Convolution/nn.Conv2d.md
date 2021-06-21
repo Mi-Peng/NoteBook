@@ -1,9 +1,17 @@
-# nn.Conv2d
+# 卷积
 
-### 1. nn.Conv2d() 参数
-in_channels: int
-out_channels: int
-kernerl_size: int or tuple
+### 1. 卷积
+
+
+<div align=center><img src="./cnn1.png" width='90%'></div>
+
+
+
+
+
+
+
+
 
 
 ### Ref

@@ -69,7 +69,7 @@ $$
 $$
 y=\gamma \cdot \frac{x-\mu}{\sqrt{\sigma^2}} + \beta \\
 \frac{\partial \mathcal{L}}{\partial \mu} = \frac{\partial \mathcal{L}}{\partial y} \cdot \frac{\partial y}{\partial \mu}=\frac{\partial \mathcal{L}}{\partial y} \cdot \gamma \\
-\frac{\partial \mathcal{L}}{\partial \sigma^2} = \frac{\partial \mathcal{L}}{\partial y} \cdot \frac{\partial y}{\partial \sigma^2}=\frac{\partial \mathcal{L}}{\partial y} \cdot 1 \\
+\frac{\partial \mathcal{L}}{\partial \sigma^2} = \frac{\partial \mathcal{L}}{\partial y} \cdot \frac{\partial y}{\partial \sigma^2}=\frac{\partial \mathcal{L}}{\partial y} \cdot 1 \\
 $$
 
 （待续，多元复合函数链式求导 + https://blog.csdn.net/lcczzu/article/details/89519345）
