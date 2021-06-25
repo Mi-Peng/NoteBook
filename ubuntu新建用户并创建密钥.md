@@ -143,5 +143,5 @@ B@ubuntu:~$ source activate
 * **scipy**: sklearn 安装中包含scipy
 * **tqdm**:`pip install tqdm`
 * **pyyaml**:（目前不再使用）
-* **lars**: 教程见https://github.com/kakaobrain/torchlars
+* **lars**: `pip install torchlars`该第三方库教程见https://github.com/kakaobrain/torchlars （该包可能由于一台服务器上有多个CUDA版本而报错）
 
