@@ -10,3 +10,8 @@ Deep Mind
 
 &emsp;&emsp; **1.1 Architecture：** encoder $f_\theta$ 与 $f_\xi$  : ResNet;
 
+
+
+$$
+A_{edge,ij} = 1 \ \ \ if\ \ \  A_{ij} > A_{threshold}
+$$
