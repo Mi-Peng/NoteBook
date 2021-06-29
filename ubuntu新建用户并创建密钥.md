@@ -1,4 +1,4 @@
-### Background
+### Ubuntu新建用户并根据用户创建密钥
 
 存在一台服务器假设ip为**xx.xx.xx.15**，OS为Ubuntu16.04.服务器上存在用户A，服务器只允许密钥登录。通过用户A的用户密码与密钥登录进入**xx.xx.xx.15**，首先新建用户B：
 
@@ -136,6 +136,7 @@ B@ubuntu:~$ source activate
 ### 常用第三方库
 
 * **pytorch**: `conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=10.1 pytorch` 需要`cat /usr/local/cuda/version.txt `找到对应CUDA版本到官网https://pytorch.org/找到相应命令
+* **dali**：(for CUDA10.0)`pip install--extra-index-url https://developer.download.nvidia.com/compute/redist --upgrade nvidia-dali-cuda100`，详见官网https://docs.nvidia.com/deeplearning/dali/user-guide/docs/installation.html
 * **hydra**: `pip install hydra-core --upgrade`
 * **numpy**: pytorch 安装中包含numpy
 * **matplotlib**: `conda install matplotlib`
@@ -144,4 +145,21 @@ B@ubuntu:~$ source activate
 * **tqdm**:`pip install tqdm`
 * **pyyaml**:（目前不再使用）
 * **lars**: `pip install torchlars`该第三方库教程见https://github.com/kakaobrain/torchlars （该包可能由于一台服务器上有多个CUDA版本而报错）
+
+### 离线安装pip包
+
+通过`pip download --extra-index-url https://developer.download.nvidia.com/compute/redist nvidia-dali-cuda110 `安装CUDA10版本对应dali；
+
+```bash
+Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple, https://developer.download.nvidia.com/compute/redist
+Collecting nvidia-dali-cuda110
+  Downloading https://developer.download.nvidia.cn/compute/redist/nvidia-dali-cuda110/nvidia_dali_cuda110-1.2.0-2356513-py3-none-manylinux2014_x86_64.whl (613.6 MB)
+     |████████████████████████████████| 613.6 MB 26 kB/s 
+Saved ./nvidia_dali_cuda110-1.2.0-2356513-py3-none-manylinux2014_x86_64.whl
+Successfully downloaded nvidia-dali-cuda110
+```
+
+通过`pip install ./nvidia_dali_cuda110-1.2.0-2356513-py3-none-manylinux2014_x86_64.whl`安装。
+
+寄！
 
