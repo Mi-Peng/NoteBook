@@ -106,6 +106,12 @@ B@ubuntu:~$ tmux new -s crl
 B@ubuntu:~$ tmux a -t crl
 ```
 
+设置鼠标操作：
+
+```bash
+set-option -g mouse on
+```
+
 ### Anaconda切换清华源
 
 ```bash
