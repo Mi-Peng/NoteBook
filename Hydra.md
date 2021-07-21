@@ -325,5 +325,57 @@ schema:
 
 You can also override value as before `db.user=Admin123` etc.
 
- 
+ ### Set New Key-Value in Python Code:
+
+Suppose your cfg.yaml as 
+
+```yaml
+a:
+	aa: 1
+	bb: 2
+```
+
+if you want to set a new key-value like:
+
+```python
+import hydra
+
+@hydra.main(config_path='.', config_name='cfg.yaml')
+def fun(args):
+    args.cc = 3
+```
+
+raise a Error
+
+```bash
+omegaconf.errors.ConfigKeyError: Key 'cc' is not in struct
+	full_key: cc
+	object_type=dict
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
+```
+
+you can achive it when your code like this
+
+```python
+import hydra
+from omegaconf import OmegaConf
+
+@hydra.main(config_path='.', config_name='cfg.yaml')
+def fun(args):
+    args = OmegaConf.structured(OmegaConf.to_yaml(args))
+    args.cc = 3
+```
+
+or:
+
+```python
+import hydra
+from omegaconf import OmegaConf,open_dict
+
+@hydra.main(config_path='.', config_name='cfg.yaml')
+def fun(args):
+    OmegaConf.set_struct(args, True)
+    with open_dict(args):
+        args.cc = 3
+```
 
