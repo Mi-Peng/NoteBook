@@ -20,13 +20,13 @@ $$
 
 ### 交叉熵 Cross Entropy 
 
-考虑两个概率分布$p,q$ 交叉熵定义如下：
+考虑两个离散概率分布$p,q$​ 交叉熵定义如下：
 $$
 H(p,q)=-\sum_{x}p(x)\log q(x)
 $$
-表示用$q$去编码$p$的冗余编码长度
+表示用 $q$ 去编码 $p$ ​的冗余编码长度
 
-假定标签分布/真实分布为 $y_i$ ，网络/模型输出 $logits$ 经过$softmax$处理后分布为 $p(x_i)$ ，则交叉熵计算如下，
+假定标签分布/真实分布为 $y$​​ ，网络/模型输出 $logits$​​ 经过$softmax$​​处理后分布为 $p(x)$​​ ，则交叉熵计算如下，
 $$
 \mathcal{L}=H(y,p)=-\sum_{i=1}^Ny_i\log p(x_i)
 $$
@@ -36,7 +36,7 @@ p(x_i)=\frac{\exp(z_i)}{\sum_{j=1}^{N}\exp(z_j)}
 $$
 做gradient flow图如下，
 
-<img src="gradient_flow_CE.png">
+<img src="gradient_flow_CE1.png" width="50%">
 
 接下来我们考虑交叉熵损失函数对$logits$ 的导数：
 $$
@@ -44,7 +44,7 @@ $$
 $$
 求和中的子项即计算图中的一条”路径“：
 
-<img src="gradient_flow_CE2.png">
+<img src="gradient_flow_CE2.png" width="50%">
 
 由于 $softmax$ 操作，所有 $p_j$ 都是 $z_i$ 的函数，所以需要求和操作；但由于$softmax$操作，$i,j$ 不同/相同的情况下 $p_j$ 对 $z_i$ 的偏导不一致，当 $i\neq j$ 时有：
 $$
