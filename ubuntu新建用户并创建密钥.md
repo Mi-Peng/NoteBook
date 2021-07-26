@@ -51,7 +51,7 @@ B@ubuntu:.ssh$ su A
 返回用户A之后，由于之前复制回来的id_rsa权限属于root用户，所以要对其做权限修改
 
 ```bash
-A@ubuntu:~$ chown luogen id_rsa
+A@ubuntu:~$ chown A id_rsa
 ```
 
 然后通过Xshell下载私钥
