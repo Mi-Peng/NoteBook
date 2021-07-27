@@ -6,6 +6,28 @@
 A@ubuntu:~$ sudo adduser B sudo
 ```
 
+> Ubuntu18.04: 
+>
+> 新建用户 -r : 建立系统账号 -m: 自动建立用户登入目录 -s: 指定用户登入后所使用shell
+>
+> ```bash
+> A@ubuntu:~$ sudo useradd -r -m -s /bin/bash yourusername
+> ```
+>
+> 为新建的用户设置密码
+>
+> ```bash
+> A@ubuntu:~$ sudo passwd yourusername
+> ```
+>
+> 为新建的用添加sudo权限
+>
+> ```bash
+> A@ubuntu:~$ sudo vim /etc/sudoers
+> ```
+>
+> 添加  `yourusername ALL=(ALL:ALL) ALL`  wq！保存退出
+
 新建用户B之后切换到用户B
 
 ```bash
@@ -94,6 +116,12 @@ source ~/.bashrc
 
 ### Tmux
 
+下载 tmux：
+
+```bash
+B@ubuntu:~$ sudo apt install tmux
+```
+
 新建会话：
 
 ```bash
@@ -117,12 +145,10 @@ set-option -g mouse on
 ```bash
 B@ubuntu:~$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
 B@ubuntu:~$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
-B@ubuntu:~$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud//pytorch/
+B@ubuntu:~$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
 B@ubuntu:~$ conda config --set show_channel_urls yes
 
 ```
-
-
 
 ### Anaconda新建虚拟环境
 
