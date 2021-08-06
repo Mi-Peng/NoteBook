@@ -120,7 +120,7 @@ $$
 
 Consider the Taylor expansion of $\log(1+x)$  at $x_0=0$:
 $$
-\log(1+x)=\frac{1}{1+x_0}\cdot(x-x_0) + o(x) 
+\log(1+x)=\frac{1}{1+x_0}\cdot(x-x_0) + o(x)
 $$
 So Eq(24) should be:
 $$

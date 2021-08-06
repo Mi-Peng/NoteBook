@@ -1,7 +1,0 @@
-多卡：
-https://www.cnblogs.com/yh-blog/p/12877922.html
-https://zhuanlan.zhihu.com/p/113694038
-INFONCE：
-https://zhuanlan.zhihu.com/p/334772391
-einops：
-https://blog.csdn.net/csdn_yi_e/article/details/109143580
