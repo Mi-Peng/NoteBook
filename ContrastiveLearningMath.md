@@ -93,7 +93,7 @@ $$
 $$
 According to **Squeeze Theorem** 
 $$
- \lim_{\tau \rarr 0^{+}} \tau \cdot\log \left[ {\sum_{k}\exp((s_{i,k}-s_{i,i})/\tau)}  \right]= \max\{0,(s_{i,0}-s_{i,i}),...,(s_{i,k}-s_{i,i})\}
+\lim_{\tau \rarr 0^{+}} \tau \cdot\log \left[ {\sum_{k}\exp((s_{i,k}-s_{i,i})/\tau)}  \right]= \max\{0,(s_{i,0}-s_{i,i}),...,(s_{i,k}-s_{i,i})\}
 $$
 
 - Consider $\tau \rarr +\infty $ :

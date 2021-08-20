@@ -1,3 +1,71 @@
+
+
+---
+
+**1、**区分Pytorch中**clone**、**detach**、**copy**等张量复制操作
+
+1.1、tensor.clone()
+
+返回一个和源张量同`shape`，`dtype` ， `device` 的张量，与源张量**不共享数据内存**，但提供**梯度回溯**。
+
+举个例子：
+
+```python
+import torch
+a = torch.tensor(1.0, requires_grad=True, device="cuda", dtype=torch.float64)
+a_ = a.clone()  
+#  tensor(1., device='cuda:0', dtype=torch.float64, grad_fn=<CloneBackward>)
+#  grad_fn=<CloneBackward>，说明clone后的返回值是个中间variable，因此支持梯度的回溯。因此，clone操作在一定程度上可以视为是一个identity-mapping函数。
+y = a ** 2
+y.backward()
+print(a.grad)  # 2
+z = a_ ** 3
+z.backward()
+print(a_grad)  # None. 中间Variable不保存梯度
+print(a.grad)  # 2 + 3 = 5
+```
+
+<img src="./tensor1.png" width="30%">
+
+从上图可以看出clone之后的a_可以理解成给a额外做的一个identity映射，两者不共享内存，是完全不同的两个张量，但由于identity-mapping，所以梯度存在回溯。
+
+1.2、tensor.detach()
+
+同样会返回一个和源张量同`shape`，`dtype` ， `device` 的张量，但与源张量**共享数据内存**，但不提供梯度，即`requires_grad=False`。
+
+举个例子：
+
+```python
+import torch
+a = torch.tensor(1.0, requires_grad=True, device='cpu', dtype=torch.float32)
+a_ = a.detach()
+print(a_)  # tensor(1.) 
+
+y = a ** 2
+y.backward()
+print(a.grad)  # tensor(2.)  grad = 2 * a = 2 * 1 = 2
+a_.requires_grad_()
+z = a_ ** 3
+z.backward()
+print(a_.grad)  # tensor(3.)  grad = 3 * a_ = 3 * 1 = 3
+print(" a ", a.grad)  # tensor(2.)  grad = 2 * a = 2 * 1 = 2 
+
+# 改变a_的data值， a的data值也相应改变
+a_.item = 2
+z = a_ ** 3
+z.backward()
+print(a_.grad)  # tensor(6.)  grad = 3 * a_ = 3 * 2 = 6
+y = a ** 2
+y.backward()
+print(a.grad)  # tensor(4.)  grad = 2 * a = 2 * 2 = 4 
+```
+
+detach可以看作，单纯取出原tensor的data部分，但不具备梯度，两者共享内存。
+
+> 通常我们将detach与clone联合使用，分离出计算图中的节点数据，使其与源数据即不共享内存，也不存在梯度。`a_data = a.clone().detach()`
+
+---
+
 **torch.chunk(input: Tensor, chunk: int, dim: int =0) -> List of Tensors** 
 
 **Tensor.chunk(chunks: Tensor, dim: int=0) -> List of Tensors** 
