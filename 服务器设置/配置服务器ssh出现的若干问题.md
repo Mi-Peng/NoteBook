@@ -1,4 +1,4 @@
-新服务器插了三根网线，两根正常以太，一根USB以太(???)
+新服务器插了三根网线，两根正常以太，一根BMC以太
 
 <img src="./figs/3EtherNet.jpg" width="50%">
 
@@ -34,7 +34,7 @@ Apply之后  开关eno1网口（手动重启），并关闭下面两个网口。
 
 <img src="./figs/setting_after_config.jpg">
 
-`ifconfig xxx down` 只是单次关闭网口，重启系统依然出现上述情况。
+`ifconfig xxx down` 只是单次关闭网口，重启系统依然出现上述情况。（）
 
 
 
