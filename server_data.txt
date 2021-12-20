@@ -1,8 +1,0 @@
-10.24.82.51
-/home/extra_data/hdd2/data/imagenet
-
-10.24.82.21
-/nvme/imagenet
-
-10.24.82.11
-/home/data/imagenet
